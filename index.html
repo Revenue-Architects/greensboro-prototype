@@ -269,11 +269,15 @@ let MEETINGS = [
 ];
 
 let NOTICES = [
+  {title:"Recycling schedule change", text:"Wednesday transfer station hours end for the season after October 14. Saturday hours continue.", until:"2026-10-14"},
   {title:"Road closure", text:"Craftsbury Road closed at the bridge Thursday 8am to 3pm for culvert work. Use the East Hill Road detour.", until:"2026-09-25"},
   {title:"Public hearing", text:"Selectboard public hearing on the proposed road ordinance, October 7 at 6:30pm, Town Hall and Zoom.", until:"2026-10-07"},
   {title:"Town office hours", text:"The Town Office will close at noon on Friday, October 9.", until:"2026-10-09"}
 ];
 
+const EVENTS = [
+  {title:"Household hazardous waste collection", date:"2026-10-03", time:"9:00am", href:"#/services"}
+];
 const TODAY = "2026-09-23";
 const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 const fmt = d => { const [y,m,dd]=d.split("-").map(Number); return MONTHS[m-1]+" "+dd+", "+y; };
@@ -294,7 +298,7 @@ const SHORTCUTS = [
   {href:"#/boards", icon:"people", t:"Boards & committees", d:"Members, schedules, and documents for every board"},
   {href:"#/alerts", icon:"bell", t:"Sign up for alerts", d:"Emergencies, road closures, and town notices"},
   {href:"#/services", icon:"doc", t:"Pay, permits & licenses", d:"Taxes, dog licenses, permits, and forms"},
-  {href:"#/summer", icon:"lake", t:"Summer in Greensboro", d:"Town beach, lake rules, transfer station"},
+  {href:"#/summer", icon:"lake", t:"Summer in Greensboro", d:"Town beach, lake rules, recreation, and Town Hall use"},
   {href:"#/contact", icon:"hall", t:"Town Office", d:"Hours, staff, and who to call"}
 ];
 
@@ -309,6 +313,13 @@ function meetItem(m){
   <div class="meta">${m.agenda?"Agenda posted":"Agenda not yet posted"}</div></div></li>`;
 }
 
+function eventItem(e){
+  const [y,mo,d]=e.date.split("-").map(Number);
+  return `<li><div class="date" aria-hidden="true"><div class="m">${MONTHS[mo-1]}</div><div class="dnum">${d}</div></div>
+  <div><a href="${e.href}">${esc(e.title)}</a><div class="meta">${fmtLong(e.date)}, ${e.time}</div>
+  <div class="meta">Town event</div></div></li>`;
+}
+
 function statusPills(m){
   const future = m.date>=TODAY;
   const a = m.agenda?'<span class="pill ok">Agenda</span>':'<span class="pill">Agenda pending</span>';
@@ -319,10 +330,12 @@ function statusPills(m){
 
 const VIEWS = {
   home(){
-    const up = upcoming().slice(0,4);
+    const up = [...upcoming().map(m=>({date:m.date,html:meetItem(m)})),
+                ...EVENTS.filter(e=>e.date>=TODAY).map(e=>({date:e.date,html:eventItem(e)}))]
+               .sort((a,b)=>a.date.localeCompare(b.date)).slice(0,5);
     return `<section class="hero"><div class="copy"><h1>Welcome to Greensboro</h1>
       <p>Meetings and records, town services, and news from the Town Office.</p>
-      <div class="quick"><a href="#/meetings">Find minutes</a><a href="#/alerts">Get alerts</a><a href="#/services">Pay taxes</a></div></div>
+      <div class="quick"><a href="#/meetings">Find minutes</a><a href="#/alerts">Get alerts</a><a href="#/services">Recycling schedule</a></div></div>
       <svg class="land" viewBox="0 0 1200 260" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
 <path d="M0 150 C140 90 250 110 360 120 C470 130 560 70 700 80 C840 90 930 130 1040 110 C1110 98 1160 105 1200 112 L1200 260 L0 260Z" fill="var(--hill-far)"/>
 <path d="M0 175 C120 140 230 150 330 162 C450 176 540 128 660 138 C790 148 880 175 1000 160 C1090 150 1150 156 1200 160 L1200 260 L0 260Z" fill="var(--hill-mid)"/>
@@ -336,8 +349,8 @@ const VIEWS = {
       <section aria-labelledby="sc"><h2 id="sc" style="margin-top:0">Most requested</h2>
         <ul class="shortcuts">${SHORTCUTS.map(s=>`<li><a href="${s.href}"><span class="badge">${ICON[s.icon]}</span><span class="t">${esc(s.t)}</span><span class="d">${esc(s.d)}</span></a></li>`).join("")}</ul>
       </section>
-      <section class="week" aria-labelledby="up"><h2 id="up">Upcoming meetings</h2>
-        <ul class="meet-list">${up.map(meetItem).join("")}</ul>
+      <section class="week" aria-labelledby="up"><h2 id="up">Upcoming meetings and events</h2>
+        <ul class="meet-list">${up.map(x=>x.html).join("")}</ul>
         <p style="margin:.75rem 0 0"><a href="#/meetings">All meetings and records</a></p>
       </section>
     </div>
@@ -438,16 +451,16 @@ const VIEWS = {
   },
 
   services(){
-    const items=[["Pay property taxes","Online payment, due dates, and mailing address"],["Dog licenses","Renew by April 1 each year"],["Permits and forms","Zoning, driveway, burn permits, and other applications"],["Land records and vital records","Deeds, birth, death, and marriage records"],["Voting and elections","Registration, absentee ballots, and results"],["Roads and plowing","Road conditions, driveway plowing, and road crew contacts"]];
+    const items=[["Trash, recycling, and hazardous waste","Transfer station hours, recycling schedule, and hazardous waste days"],["Pay property taxes","Online payment, due dates, and mailing address"],["Dog licenses","Renew by April 1 each year"],["Permits and forms","Zoning, driveway, burn permits, and other applications"],["Land records and vital records","Deeds, birth, death, and marriage records"],["Voting and elections","Registration, absentee ballots, and results"],["Roads and plowing","Road conditions, driveway plowing, and road crew contacts"]];
     return `<div class="crumbs"><a href="#/">Home</a> / Services</div>
     <h1>Services</h1><p class="lede">Each service page answers the same questions in the same order: what it is, who needs it, how to do it, cost, forms, and who to contact.</p>
     <ul class="boards">${items.map(i=>`<li><a href="#/services"><span class="t">${i[0]}</span><div class="meta">${i[1]}</div></a></li>`).join("")}</ul>`;
   },
 
   summer(){
-    const items=[["Town beach","Hours, parking, and rules"],["Caspian Lake","Boating, invasive species checks, and lake rules"],["Transfer station and recycling","Days, hours, and what's accepted"],["Burn permits","When you need one and how to get it"],["Trails and conservation land","Maps and access"],["Seasonal and rental properties","What owners and renters should know"]];
+    const items=[["Town beach","Hours, parking, and rules"],["Caspian Lake","Boating, invasive species checks, and lake rules"],["Town Hall and facility use","Booking, availability, and uses such as pickleball"],["Trails and conservation land","Maps and access"],["Seasonal and rental properties","What owners and renters should know"],["Community events","Town events and seasonal activities"]];
     return `<div class="crumbs"><a href="#/">Home</a> / Community</div>
-    <h1>Summer in Greensboro</h1><p class="lede">For year-round residents and the many families who join us each summer.</p>
+    <h1>Community and summer</h1><p class="lede">Recreation, town facilities, and what year-round and summer residents need to know.</p>
     <ul class="boards">${items.map(i=>`<li><a href="#/summer"><span class="t">${i[0]}</span><div class="meta">${i[1]}</div></a></li>`).join("")}</ul>`;
   },
 
