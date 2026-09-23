@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Town of Greensboro, Vermont: IA concept prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFFFFF; --panel:#EEF3F4; --ink:#1D2A31; --muted:#4A5B63; --line:#D3DDE1;
+  --lake:#1F4457; --lake-2:#2A5D74; --hemlock:#3E5C45;
+  --header-bg:#1F4457; --header-ink:#FFFFFF; --nav-bg:#173544;
+  --alert-bg:#9E2F22; --alert-ink:#FFFFFF; --proto-bg:#FFF4D6; --proto-ink:#4A3A00;
+  --focus:#D99A00;
+  --sky:#DDEAEF; --sky-2:#EEF5F7; --hill-far:#A7BFB8; --hill-mid:#7E9E8B; --hill-near:#4F7160; --water:#3F7189; --water-2:#5B8CA3; --birch:#F6F5F0; --birch-mark:#2E3A3F; --gold:#E2B04A; --foot-bg:#173544; --foot-ink:#DCE7EB;
+  --sans:"Public Sans",system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;
+  --serif:"Source Serif 4",Georgia,"Times New Roman",serif;
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#11191D; --panel:#1A252B; --ink:#E6EDF0; --muted:#A7B7BE; --line:#2C3A41;
+    --lake:#8CC2D9; --lake-2:#A9D3E4; --hemlock:#9CC3A4;
+    --header-bg:#16303D; --nav-bg:#10252F; --alert-bg:#7E2419;
+    --proto-bg:#3A3217; --proto-ink:#F3E3B0;
+    --sky:#1B2D36; --sky-2:#15232A; --hill-far:#2B4540; --hill-mid:#2F4F42; --hill-near:#253E33; --water:#20475A; --water-2:#2C5A70; --birch:#C9CCC4; --birch-mark:#11191D; --foot-bg:#0C1C24; --foot-ink:#B9C9CF;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11191D; --panel:#1A252B; --ink:#E6EDF0; --muted:#A7B7BE; --line:#2C3A41;
+  --lake:#8CC2D9; --lake-2:#A9D3E4; --hemlock:#9CC3A4;
+  --header-bg:#16303D; --nav-bg:#10252F; --alert-bg:#7E2419;
+  --proto-bg:#3A3217; --proto-ink:#F3E3B0;
+  --sky:#1B2D36; --sky-2:#15232A; --hill-far:#2B4540; --hill-mid:#2F4F42; --hill-near:#253E33; --water:#20475A; --water-2:#2C5A70; --birch:#C9CCC4; --birch-mark:#11191D; --foot-bg:#0C1C24; --foot-ink:#B9C9CF;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:1.0625rem;line-height:1.6}
+img,svg{max-width:100%}
+a{color:var(--lake-2)}
+a:hover{text-decoration-thickness:2px}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px}
+.skip{position:absolute;left:-999px;top:0;background:var(--bg);color:var(--ink);padding:.5rem 1rem;z-index:10}
+.skip:focus{left:1rem;top:1rem}
+.wrap{max-width:72rem;margin:0 auto;padding:0 1.25rem}
+
+/* prototype toolbar */
+.proto{background:var(--proto-bg);color:var(--proto-ink);font-size:.875rem}
+.proto .wrap{display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center;justify-content:space-between;padding-top:.5rem;padding-bottom:.5rem}
+.proto button,.proto a.btn{font:inherit;font-weight:600;background:transparent;color:inherit;border:1px solid currentColor;border-radius:4px;padding:.2rem .6rem;cursor:pointer;text-decoration:none}
+.proto .tools{display:flex;gap:.5rem;flex-wrap:wrap}
+
+/* alert banner */
+.banner{background:var(--alert-bg);color:var(--alert-ink)}
+.banner .wrap{display:flex;gap:.75rem;align-items:flex-start;padding-top:.75rem;padding-bottom:.75rem}
+.banner strong{font-weight:700}
+.banner a{color:inherit}
+[hidden]{display:none !important}
+
+/* header */
+header.site{background:var(--header-bg);color:var(--header-ink)}
+.masthead{display:flex;flex-wrap:wrap;gap:1rem;align-items:center;justify-content:space-between;padding-top:1.1rem;padding-bottom:1.1rem}
+.brand{color:inherit;text-decoration:none;display:flex;align-items:center;gap:.85rem;line-height:1.1}
+.brand .words{display:flex;flex-direction:column}
+.emblem{width:52px;height:52px;flex:none}
+.brand .name{font-family:var(--serif);font-weight:600;font-size:1.75rem;letter-spacing:.005em}
+.brand .state{font-size:.95rem;opacity:.85;margin-top:.2rem}
+form.search{display:flex;gap:.4rem;flex:0 1 22rem}
+form.search input{flex:1;min-width:0;font:inherit;font-size:1rem;padding:.5rem .7rem;border:1px solid transparent;border-radius:4px}
+form.search button{font:inherit;font-size:1rem;font-weight:600;padding:.5rem .9rem;border-radius:4px;border:1px solid var(--header-ink);background:transparent;color:var(--header-ink);cursor:pointer}
+nav.main{background:var(--nav-bg)}
+nav.main ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap}
+nav.main a{display:block;color:#fff;text-decoration:none;font-weight:600;padding:.8rem 1rem;border-bottom:3px solid transparent}
+nav.main a:hover{background:rgba(255,255,255,.08)}
+nav.main a[aria-current="page"]{border-bottom-color:var(--gold)}
+@media (max-width:40rem){nav.main a{padding:.65rem .75rem;font-size:.95rem}}
+
+main{padding:2rem 0 3rem}
+main:focus,main:focus-visible{outline:none}
+h1{font-family:var(--serif);font-weight:600;font-size:2.1rem;line-height:1.2;margin:0 0 .5rem}
+h2{font-size:1.3rem;line-height:1.3;margin:2.25rem 0 .75rem}
+h3{font-size:1.05rem;margin:0 0 .25rem}
+.lede{color:var(--muted);max-width:44rem;margin:0 0 1.5rem}
+.crumbs{font-size:.9rem;color:var(--muted);margin-bottom:.75rem}
+.crumbs a{color:inherit}
+
+
+/* hero */
+.hero{position:relative;background:linear-gradient(var(--sky-2),var(--sky));border-radius:4px;overflow:hidden;margin:-.5rem 0 2rem}
+.hero .copy{position:relative;z-index:1;padding:2rem 2rem 0;max-width:40rem}
+.hero h1{font-size:2.6rem;margin-bottom:.4rem;color:var(--ink)}
+.hero p{margin:0 0 1rem;color:var(--muted);font-size:1.12rem}
+.hero .quick{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.25rem}
+.hero .quick a{background:var(--bg);color:var(--lake-2);font-weight:600;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:.35rem .9rem;font-size:.95rem}
+.hero .quick a:hover{border-color:var(--lake-2)}
+.hero svg.land{display:block;width:100%;height:auto;margin-top:-1rem}
+@media (min-width:52rem){.hero svg.land{margin-top:-4.5rem}}
+@media (max-width:40rem){.hero .copy{padding:1.4rem 1.2rem 0}.hero h1{font-size:2rem}}
+.badge{display:inline-grid;place-items:center;width:46px;height:46px;border-radius:50%;background:var(--panel)}
+.shortcuts a:hover .badge{background:var(--bg)}
+
+/* homepage */
+.home-top{display:grid;grid-template-columns:1.35fr 1fr;gap:2rem;align-items:start}
+@media (max-width:52rem){.home-top{grid-template-columns:1fr}}
+.shortcuts{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem;margin:0;padding:0;list-style:none}
+@media (max-width:60rem){.shortcuts{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:30rem){.shortcuts{grid-template-columns:1fr}}
+.shortcuts a{display:flex;flex-direction:column;gap:.35rem;height:100%;padding:1.1rem 1.1rem 1rem;border:1px solid var(--line);border-left:5px solid var(--lake);border-radius:3px;text-decoration:none;color:var(--ink);background:var(--bg)}
+.shortcuts a:hover{background:var(--panel)}
+.shortcuts svg{width:28px;height:28px;stroke:var(--lake);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.shortcuts .t{font-weight:700;font-size:1.08rem;color:var(--lake-2)}
+.shortcuts .d{font-size:.93rem;color:var(--muted);line-height:1.45}
+
+.week{background:var(--panel);border-radius:3px;padding:1.25rem}
+.week h2{margin-top:0}
+.meet-list{list-style:none;margin:0;padding:0}
+.meet-list li{display:grid;grid-template-columns:3.6rem 1fr;gap:.9rem;padding:.7rem 0;border-top:1px solid var(--line)}
+.meet-list li:first-child{border-top:0}
+.date{text-align:center;line-height:1;border:1px solid var(--line);background:var(--bg);border-radius:3px;padding:.4rem 0}
+.date .m{font-size:.8rem;color:var(--muted)}
+.date .dnum{font-family:var(--serif);font-size:1.6rem;font-weight:600;color:var(--lake)}
+.meet-list a{font-weight:600}
+.meta{font-size:.9rem;color:var(--muted)}
+
+.notices{list-style:none;margin:0;padding:0;max-width:48rem}
+.notices li{padding:.9rem 0;border-top:1px solid var(--line)}
+.notices .until{font-size:.85rem;color:var(--muted)}
+
+/* records finder */
+.filters{display:flex;flex-wrap:wrap;gap:.75rem 1rem;align-items:end;background:var(--panel);padding:1rem;border-radius:3px;margin-bottom:1rem}
+.filters label{display:flex;flex-direction:column;font-size:.9rem;font-weight:600;gap:.25rem}
+select,input[type=text],input[type=date],input[type=time],input[type=url],input[type=search],textarea{font:inherit;font-size:1rem;padding:.45rem .6rem;border:1px solid #8FA3AC;border-radius:4px;background:var(--bg);color:var(--ink)}
+.count{color:var(--muted);font-size:.95rem;margin:.25rem 0 .5rem}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;min-width:40rem}
+th,td{text-align:left;padding:.65rem .6rem;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.9rem;color:var(--muted);font-weight:600}
+.pill{display:inline-block;font-size:.8rem;font-weight:600;padding:.05rem .5rem;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.pill.ok{border-color:var(--hemlock);color:var(--hemlock)}
+
+/* detail */
+.two{display:grid;grid-template-columns:2fr 1fr;gap:2rem}
+@media (max-width:52rem){.two{grid-template-columns:1fr}}
+.card{border:1px solid var(--line);border-radius:3px;padding:1.1rem}
+.docs{list-style:none;padding:0;margin:0}
+.docs li{display:flex;justify-content:space-between;gap:1rem;padding:.6rem 0;border-top:1px solid var(--line)}
+.docs li:first-child{border-top:0}
+dl.facts{display:grid;grid-template-columns:auto 1fr;gap:.35rem 1rem;margin:0}
+dl.facts dt{font-weight:600}
+dl.facts dd{margin:0}
+.roster{list-style:none;padding:0;margin:0;columns:2;column-gap:2rem}
+@media (max-width:30rem){.roster{columns:1}}
+.roster li{padding:.3rem 0;break-inside:avoid}
+.boards{display:grid;grid-template-columns:repeat(auto-fill,minmax(16rem,1fr));gap:.9rem;list-style:none;padding:0;margin:0}
+.boards a{display:block;padding:1rem;border:1px solid var(--line);border-radius:3px;text-decoration:none;color:var(--ink);height:100%}
+.boards a:hover{background:var(--panel)}
+.boards .t{font-weight:700;color:var(--lake-2)}
+
+/* staff view */
+.staff-intro{border-left:5px solid var(--hemlock);padding:.25rem 0 .25rem 1rem;margin-bottom:1.5rem;max-width:48rem}
+.forms{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+@media (max-width:52rem){.forms{grid-template-columns:1fr}}
+.form{border:1px solid var(--line);border-radius:3px;padding:1.25rem}
+.form h2{margin-top:0}
+.field{display:flex;flex-direction:column;gap:.25rem;margin-bottom:.85rem}
+.field label{font-weight:600;font-size:.95rem}
+.field .hint{font-size:.85rem;color:var(--muted)}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
+.check{display:flex;gap:.5rem;align-items:flex-start;margin-bottom:.85rem}
+.check input{margin-top:.35rem}
+.primary{font:inherit;font-weight:700;background:var(--hemlock);color:#fff;border:0;border-radius:4px;padding:.6rem 1.1rem;cursor:pointer}
+:root[data-theme="dark"] .primary{color:#11191D}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .primary{color:#11191D}}
+.status{margin-top:.75rem;font-weight:600;color:var(--hemlock)}
+
+.out{display:inline-flex;gap:.3rem;align-items:center}
+.note{font-size:.9rem;color:var(--muted);max-width:48rem}
+
+footer{background:var(--foot-bg);color:var(--foot-ink);padding:2rem 0 2.75rem;font-size:.95rem}
+footer a{color:#fff}
+footer .cols{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem}
+@media (max-width:44rem){footer .cols{grid-template-columns:1fr}}
+footer h2{font-size:1rem;margin:0 0 .4rem;color:#fff}
+footer p{margin:0}
+@media (prefers-reduced-motion:no-preference){.status{animation:fade .3s ease-out}@keyframes fade{from{opacity:0}to{opacity:1}}}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to main content</a>
+
+<div class="proto" role="region" aria-label="Prototype controls">
+  <div class="wrap">
+    <span><strong>Not the official town website.</strong> A concept prototype by Revenue Architects for committee review. Sample content only. <a href="FEEDBACK_LINK" style="color:inherit;font-weight:600">Send feedback</a></span>
+    <div class="tools">
+      <button type="button" id="toggleBanner" aria-pressed="false">Show alert banner</button>
+      <a class="btn" href="#/staff">Staff view: how Brett and Josh post</a>
+      <a class="btn" href="#/">Resident view</a>
+    </div>
+  </div>
+</div>
+
+<div class="banner" id="banner" hidden role="alert">
+  <div class="wrap">
+    <div><strong id="bannerTitle">Road closure:</strong> <span id="bannerText">Craftsbury Road closed at the bridge Thursday 8am to 3pm for culvert work. Use the East Hill Road detour.</span> <a href="#/notices">All notices</a></div>
+  </div>
+</div>
+
+<header class="site">
+  <div class="wrap masthead">
+    <a class="brand" href="#/"><svg class="emblem" viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="30" fill="none" stroke="#fff" stroke-width="2.5"/><path d="M8 38l12-12 8 7 9-12 19 17" fill="none" stroke="#fff" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/><path d="M12 44c4 0 4-2 8-2s4 2 8 2 4-2 8-2 4 2 8 2 4-2 8-2M17 50c3 0 3-1.5 6-1.5s3 1.5 6 1.5 3-1.5 6-1.5 3 1.5 6 1.5" fill="none" stroke="#E2B04A" stroke-width="2.2" stroke-linecap="round"/></svg><span class="words"><span class="name">Town of Greensboro</span><span class="state">Vermont</span></span></a>
+    <form class="search" role="search" id="searchForm">
+      <label for="q" class="skip">Search the site</label>
+      <input id="q" type="search" placeholder="Search meetings, minutes, forms">
+      <button type="submit">Search</button>
+    </form>
+  </div>
+  <nav class="main" aria-label="Main">
+    <div class="wrap"><ul>
+      <li><a href="#/meetings" data-nav="meetings">Meetings &amp; Records</a></li>
+      <li><a href="#/boards" data-nav="boards">Boards &amp; Committees</a></li>
+      <li><a href="#/services" data-nav="services">Services</a></li>
+      <li><a href="#/summer" data-nav="summer">Community</a></li>
+      <li><a href="#/contact" data-nav="contact">Town Office</a></li>
+    </ul></div>
+  </nav>
+</header>
+
+<main id="main" tabindex="-1"><div class="wrap" id="view"></div></main>
+
+<footer>
+  <div class="wrap cols">
+    <div><h2>Town Office</h2><p>[Street address]<br>Greensboro, VT [ZIP]<br>[Phone]</p></div>
+    <div><h2>Office hours</h2><p>[Days and hours]</p></div>
+    <div><h2>About this site</h2><p><a href="#/accessibility">Accessibility statement</a><br>Structure designed to run on the current WordPress site and carry over to a future platform.</p></div>
+  </div>
+</footer>
+
+<script>
+const BOARDS = [
+  {id:"selectboard", name:"Selectboard", about:"The town's executive body. Sets policy, adopts the budget, and oversees town operations.", schedule:"[Regular schedule, e.g. first and third Wednesday], 6:30pm, Town Hall and Zoom"},
+  {id:"planning", name:"Planning Commission", about:"Prepares the town plan and advises on zoning and land use.", schedule:"[Regular schedule], Town Hall and Zoom"},
+  {id:"bca", name:"Board of Civil Authority", about:"Oversees elections and hears property tax appeals.", schedule:"As needed"},
+  {id:"conservation", name:"Conservation Commission", about:"Advises on natural resources, trails, and conservation land.", schedule:"[Regular schedule]"},
+  {id:"beach", name:"Beach Committee", about:"Oversees the town beach and related summer operations.", schedule:"[Regular schedule, spring and summer]"},
+  {id:"cemetery", name:"Cemetery Commission", about:"Manages town cemeteries and lot sales.", schedule:"[Regular schedule]"},
+  {id:"wastewater", name:"Wastewater Committee", about:"Advises on the village wastewater system.", schedule:"As needed"}
+];
+const boardName = id => (BOARDS.find(b=>b.id===id)||{}).name||id;
+
+let MEETINGS = [
+  {id:"sb-2026-10-07", board:"selectboard", date:"2026-10-07", time:"6:30pm", agenda:true, minutes:false, recording:false},
+  {id:"pc-2026-09-29", board:"planning", date:"2026-09-29", time:"7:00pm", agenda:true, minutes:false, recording:false},
+  {id:"cc-2026-10-01", board:"conservation", date:"2026-10-01", time:"6:00pm", agenda:false, minutes:false, recording:false},
+  {id:"bca-2026-10-13", board:"bca", date:"2026-10-13", time:"5:30pm", agenda:false, minutes:false, recording:false},
+  {id:"sb-2026-09-16", board:"selectboard", date:"2026-09-16", time:"6:30pm", agenda:true, minutes:true, recording:true},
+  {id:"sb-2026-09-02", board:"selectboard", date:"2026-09-02", time:"6:30pm", agenda:true, minutes:true, recording:true},
+  {id:"pc-2026-08-25", board:"planning", date:"2026-08-25", time:"7:00pm", agenda:true, minutes:true, recording:true},
+  {id:"beach-2026-08-12", board:"beach", date:"2026-08-12", time:"5:00pm", agenda:true, minutes:true, recording:false},
+  {id:"sb-2026-08-19", board:"selectboard", date:"2026-08-19", time:"6:30pm", agenda:true, minutes:true, recording:true},
+  {id:"cem-2026-07-22", board:"cemetery", date:"2026-07-22", time:"4:00pm", agenda:true, minutes:true, recording:false},
+  {id:"ww-2026-06-10", board:"wastewater", date:"2026-06-10", time:"6:00pm", agenda:true, minutes:true, recording:true},
+  {id:"sb-2025-12-03", board:"selectboard", date:"2025-12-03", time:"6:30pm", agenda:true, minutes:true, recording:true},
+  {id:"pc-2025-11-18", board:"planning", date:"2025-11-18", time:"7:00pm", agenda:true, minutes:true, recording:true}
+];
+
+let NOTICES = [
+  {title:"Road closure", text:"Craftsbury Road closed at the bridge Thursday 8am to 3pm for culvert work. Use the East Hill Road detour.", until:"2026-09-25"},
+  {title:"Public hearing", text:"Selectboard public hearing on the proposed road ordinance, October 7 at 6:30pm, Town Hall and Zoom.", until:"2026-10-07"},
+  {title:"Town office hours", text:"The Town Office will close at noon on Friday, October 9.", until:"2026-10-09"}
+];
+
+const TODAY = "2026-09-23";
+const MONTHS = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const fmt = d => { const [y,m,dd]=d.split("-").map(Number); return MONTHS[m-1]+" "+dd+", "+y; };
+const fmtLong = d => new Date(d+"T12:00:00").toLocaleDateString("en-US",{weekday:"long",month:"long",day:"numeric",year:"numeric"});
+const esc = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+const ICON = {
+  gavel:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4l6 6M11 7l6 6M8.5 9.5l6 6M4 20l7-7M3 21h8"/></svg>',
+  people:'<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="8" cy="8" r="3"/><circle cx="16.5" cy="9" r="2.5"/><path d="M2.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5M13.5 15.2c.9-.8 1.9-1.2 3-1.2 2.3 0 4 1.6 4.5 4.5"/></svg>',
+  bell:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 20.5a2.2 2.2 0 0 0 4 0"/></svg>',
+  doc:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l4 4v14H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></svg>',
+  lake:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 15c2 0 2-1.5 4.5-1.5S10 15 12 15s2-1.5 4.5-1.5S19 15 21 15M3 19c2 0 2-1.5 4.5-1.5S10 19 12 19s2-1.5 4.5-1.5S19 19 21 19"/><path d="M7 11l4-6 3 4 2-2 3 4"/></svg>',
+  hall:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10l9-6 9 6M5 10v9M19 10v9M9 19v-5h6v5M3 20h18"/></svg>'
+};
+
+const SHORTCUTS = [
+  {href:"#/board/selectboard", icon:"gavel", t:"Selectboard meetings", d:"Agendas, minutes, and recordings"},
+  {href:"#/boards", icon:"people", t:"Boards & committees", d:"Members, schedules, and documents for every board"},
+  {href:"#/alerts", icon:"bell", t:"Sign up for alerts", d:"Emergencies, road closures, and town notices"},
+  {href:"#/services", icon:"doc", t:"Pay, permits & licenses", d:"Taxes, dog licenses, permits, and forms"},
+  {href:"#/summer", icon:"lake", t:"Summer in Greensboro", d:"Town beach, lake rules, transfer station"},
+  {href:"#/contact", icon:"hall", t:"Town Office", d:"Hours, staff, and who to call"}
+];
+
+function upcoming(board){ return MEETINGS.filter(m=>m.date>=TODAY&&(!board||m.board===board)).sort((a,b)=>a.date.localeCompare(b.date)); }
+function past(board){ return MEETINGS.filter(m=>m.date<TODAY&&(!board||m.board===board)).sort((a,b)=>b.date.localeCompare(a.date)); }
+function activeNotices(){ return NOTICES.filter(n=>n.until>=TODAY); }
+
+function meetItem(m){
+  const [y,mo,d]=m.date.split("-").map(Number);
+  return `<li><div class="date" aria-hidden="true"><div class="m">${MONTHS[mo-1]}</div><div class="dnum">${d}</div></div>
+  <div><a href="#/meeting/${m.id}">${esc(boardName(m.board))}</a><div class="meta">${fmtLong(m.date)}, ${m.time}</div>
+  <div class="meta">${m.agenda?"Agenda posted":"Agenda not yet posted"}</div></div></li>`;
+}
+
+function statusPills(m){
+  const future = m.date>=TODAY;
+  const a = m.agenda?'<span class="pill ok">Agenda</span>':'<span class="pill">Agenda pending</span>';
+  const mi = future?'':(m.minutes?'<span class="pill ok">Minutes</span>':'<span class="pill">Minutes pending</span>');
+  const r = future?'':(m.recording?'<span class="pill ok">Recording</span>':'');
+  return [a,mi,r].filter(Boolean).join(" ");
+}
+
+const VIEWS = {
+  home(){
+    const up = upcoming().slice(0,4);
+    return `<section class="hero"><div class="copy"><h1>Welcome to Greensboro</h1>
+      <p>Meetings and records, town services, and news from the Town Office.</p>
+      <div class="quick"><a href="#/meetings">Find minutes</a><a href="#/alerts">Get alerts</a><a href="#/services">Pay taxes</a></div></div>
+      <svg class="land" viewBox="0 0 1200 260" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+<path d="M0 150 C140 90 250 110 360 120 C470 130 560 70 700 80 C840 90 930 130 1040 110 C1110 98 1160 105 1200 112 L1200 260 L0 260Z" fill="var(--hill-far)"/>
+<path d="M0 175 C120 140 230 150 330 162 C450 176 540 128 660 138 C790 148 880 175 1000 160 C1090 150 1150 156 1200 160 L1200 260 L0 260Z" fill="var(--hill-mid)"/>
+<path d="M0 196 C160 176 300 190 430 186 C560 182 640 170 760 178 C900 188 1040 180 1200 186 L1200 260 L0 260Z" fill="var(--hill-near)"/>
+<rect x="0" y="200" width="1200" height="60" fill="var(--water)"/>
+<g stroke="var(--water-2)" stroke-width="3" stroke-linecap="round" fill="none"><path d="M80 218h90M260 230h140M520 216h70M700 236h120M930 222h90M1060 240h80M150 246h60M420 248h90"/></g>
+<g><rect x="1052" y="84" width="9" height="130" fill="var(--birch)"/><rect x="1080" y="60" width="11" height="154" fill="var(--birch)"/><rect x="1112" y="100" width="8" height="114" fill="var(--birch)"/>
+<g fill="var(--birch-mark)"><rect x="1052" y="110" width="5" height="2"/><rect x="1056" y="140" width="5" height="2"/><rect x="1052" y="176" width="6" height="2"/><rect x="1080" y="88" width="6" height="2"/><rect x="1085" y="124" width="6" height="2"/><rect x="1080" y="160" width="7" height="2"/><rect x="1086" y="190" width="5" height="2"/><rect x="1112" y="130" width="5" height="2"/><rect x="1115" y="166" width="5" height="2"/></g></g>
+</svg></section>
+    <div class="home-top">
+      <section aria-labelledby="sc"><h2 id="sc" style="margin-top:0">Most requested</h2>
+        <ul class="shortcuts">${SHORTCUTS.map(s=>`<li><a href="${s.href}"><span class="badge">${ICON[s.icon]}</span><span class="t">${esc(s.t)}</span><span class="d">${esc(s.d)}</span></a></li>`).join("")}</ul>
+      </section>
+      <section class="week" aria-labelledby="up"><h2 id="up">Upcoming meetings</h2>
+        <ul class="meet-list">${up.map(meetItem).join("")}</ul>
+        <p style="margin:.75rem 0 0"><a href="#/meetings">All meetings and records</a></p>
+      </section>
+    </div>
+    <section aria-labelledby="nt"><h2 id="nt">Town notices</h2>
+      <ul class="notices">${activeNotices().map(n=>`<li><h3>${esc(n.title)}</h3><div>${esc(n.text)}</div><div class="until">Posted by the Town Office. Shown until ${fmt(n.until)}.</div></li>`).join("")}</ul>
+    </section>`;
+  },
+
+  meetings(params){
+    const q = (params.get("q")||"").toLowerCase();
+    const years=[...new Set(MEETINGS.map(m=>m.date.slice(0,4)))].sort().reverse();
+    return `<div class="crumbs"><a href="#/">Home</a> / Meetings &amp; Records</div>
+    <h1>Meetings &amp; Records</h1>
+    <p class="lede">Every public meeting in one place, with its agenda, minutes, and recording. Filter by board or year.</p>
+    <div class="filters">
+      <label>Board<select id="fBoard"><option value="">All boards</option>${BOARDS.map(b=>`<option value="${b.id}">${esc(b.name)}</option>`).join("")}</select></label>
+      <label>Year<select id="fYear"><option value="">All years</option>${years.map(y=>`<option>${y}</option>`).join("")}</select></label>
+      <label>Show<select id="fWhen"><option value="">Upcoming and past</option><option value="up">Upcoming only</option><option value="past">Past only</option></select></label>
+      <label>Keyword<input type="text" id="fQ" value="${esc(q)}" placeholder="e.g. budget"></label>
+    </div>
+    <p class="count" id="count" aria-live="polite"></p>
+    <div class="table-wrap"><table><caption class="skip">Meetings</caption>
+      <thead><tr><th scope="col">Date</th><th scope="col">Board</th><th scope="col">Documents</th></tr></thead>
+      <tbody id="rows"></tbody></table></div>
+    <p class="note">Older records (before 2021) are in the <a href="#/meetings">archive</a>. In the current site these live in separate folders; here they share one list.</p>`;
+  },
+
+  meeting(params,id){
+    const m = MEETINGS.find(x=>x.id===id); if(!m) return VIEWS.notfound();
+    const future = m.date>=TODAY;
+    const b = BOARDS.find(x=>x.id===m.board);
+    return `<div class="crumbs"><a href="#/">Home</a> / <a href="#/meetings">Meetings &amp; Records</a> / ${esc(b.name)}</div>
+    <h1>${esc(b.name)} meeting</h1>
+    <p class="lede">${fmtLong(m.date)}, ${m.time}</p>
+    <div class="two">
+      <section class="card" aria-labelledby="dh"><h2 id="dh" style="margin-top:0">Documents</h2>
+        <ul class="docs">
+          <li><span>Agenda</span><span>${m.agenda?'<a href="#/meeting/'+m.id+'">Agenda (PDF, sample)</a>':'Posted at least 48 hours before the meeting'}</span></li>
+          ${m.agenda?'<li><span>Meeting packet</span><span><a href="#/meeting/'+m.id+'">Packet (PDF, sample)</a></span></li>':''}
+          <li><span>Minutes</span><span>${future?'Posted within 5 days after the meeting':(m.minutes?'<a href="#/meeting/'+m.id+'">Minutes (sample)</a>':'Draft minutes due within 5 days')}</span></li>
+          <li><span>Recording</span><span>${future?'Available after the meeting':(m.recording?'<a href="#/meeting/'+m.id+'" class="out">Watch recording (external)</a>':'Not recorded')}</span></li>
+        </ul>
+      </section>
+      <aside class="card" aria-labelledby="ah"><h2 id="ah" style="margin-top:0">Attend</h2>
+        <dl class="facts"><dt>Where</dt><dd>Town Hall and Zoom</dd><dt>Zoom</dt><dd>${future?'<a href="#/meeting/'+m.id+'">Join link (sample)</a>':'Meeting has ended'}</dd><dt>Board</dt><dd><a href="#/board/${b.id}">${esc(b.name)}</a></dd></dl>
+      </aside>
+    </div>`;
+  },
+
+  boards(){
+    return `<div class="crumbs"><a href="#/">Home</a> / Boards &amp; Committees</div>
+    <h1>Boards &amp; Committees</h1>
+    <p class="lede">Each board has its own page with members, meeting schedule, and all of its agendas and minutes.</p>
+    <ul class="boards">${BOARDS.map(b=>`<li><a href="#/board/${b.id}"><span class="t">${esc(b.name)}</span><div class="meta">${esc(b.about)}</div></a></li>`).join("")}</ul>`;
+  },
+
+  board(params,id){
+    const b = BOARDS.find(x=>x.id===id); if(!b) return VIEWS.notfound();
+    const up = upcoming(id), pa = past(id).slice(0,6);
+    return `<div class="crumbs"><a href="#/">Home</a> / <a href="#/boards">Boards &amp; Committees</a> / ${esc(b.name)}</div>
+    <h1>${esc(b.name)}</h1>
+    <p class="lede">${esc(b.about)}</p>
+    <div class="two">
+      <div>
+        <h2 style="margin-top:0">Upcoming</h2>
+        ${up.length?`<ul class="meet-list">${up.map(meetItem).join("")}</ul>`:'<p>No meetings scheduled yet. Check back or sign up for alerts.</p>'}
+        <h2>Recent meetings</h2>
+        ${pa.length?`<div class="table-wrap"><table><thead><tr><th scope="col">Date</th><th scope="col">Documents</th></tr></thead><tbody>${pa.map(m=>`<tr><td><a href="#/meeting/${m.id}">${fmt(m.date)}</a></td><td>${statusPills(m)}</td></tr>`).join("")}</tbody></table></div>`:'<p>No past meetings in this sample.</p>'}
+        <p><a href="#/meetings?board=${id}">All ${esc(b.name)} records</a></p>
+      </div>
+      <aside class="card" aria-labelledby="mh"><h2 id="mh" style="margin-top:0">Members</h2>
+        <ul class="roster"><li>[Member name], Chair<br><span class="meta">Term ends [year]</span></li><li>[Member name]<br><span class="meta">Term ends [year]</span></li><li>[Member name]<br><span class="meta">Term ends [year]</span></li></ul>
+        <h2>Schedule</h2><p style="margin:0">${esc(b.schedule)}</p>
+        <h2>Contact</h2><p style="margin:0">[Board email or Town Office]</p>
+      </aside>
+    </div>`;
+  },
+
+  alerts(){
+    return `<div class="crumbs"><a href="#/">Home</a> / Sign up for alerts</div>
+    <h1>Sign up for alerts</h1>
+    <p class="lede">Two ways to hear from the town. Sign up for either or both.</p>
+    <div class="two" style="grid-template-columns:1fr 1fr">
+      <section class="card"><h2 style="margin-top:0">Emergency alerts: VT-ALERT</h2>
+        <p>The State of Vermont's free alert system. Used for urgent public safety messages such as floods, boil water notices, and major road closures. Choose text, email, phone, or the Everbridge app.</p>
+        <p>Add Greensboro as one of your locations, including if you're here only in summer.</p>
+        <p><a href="#/alerts" class="out">Sign up at vtalert.gov (external)</a></p>
+        <p class="note">Registered before December 2025? The state asks you to create a new account.</p>
+      </section>
+      <section class="card"><h2 style="margin-top:0">Town notices by email</h2>
+        <p>Meeting changes, office closures, and other routine town news. Sent by the Town Office.</p>
+        <div class="field"><label for="em">Email address</label><input id="em" type="text" autocomplete="email"></div>
+        <button class="primary" type="button" onclick="this.nextElementSibling.hidden=false">Subscribe</button>
+        <p class="status" hidden>Subscribed (prototype only; no email is sent).</p>
+      </section>
+    </div>
+    <p class="note">The website posts notices and links to both services. Sending the messages is handled by those services, not by the website.</p>`;
+  },
+
+  services(){
+    const items=[["Pay property taxes","Online payment, due dates, and mailing address"],["Dog licenses","Renew by April 1 each year"],["Permits and forms","Zoning, driveway, burn permits, and other applications"],["Land records and vital records","Deeds, birth, death, and marriage records"],["Voting and elections","Registration, absentee ballots, and results"],["Roads and plowing","Road conditions, driveway plowing, and road crew contacts"]];
+    return `<div class="crumbs"><a href="#/">Home</a> / Services</div>
+    <h1>Services</h1><p class="lede">Each service page answers the same questions in the same order: what it is, who needs it, how to do it, cost, forms, and who to contact.</p>
+    <ul class="boards">${items.map(i=>`<li><a href="#/services"><span class="t">${i[0]}</span><div class="meta">${i[1]}</div></a></li>`).join("")}</ul>`;
+  },
+
+  summer(){
+    const items=[["Town beach","Hours, parking, and rules"],["Caspian Lake","Boating, invasive species checks, and lake rules"],["Transfer station and recycling","Days, hours, and what's accepted"],["Burn permits","When you need one and how to get it"],["Trails and conservation land","Maps and access"],["Seasonal and rental properties","What owners and renters should know"]];
+    return `<div class="crumbs"><a href="#/">Home</a> / Community</div>
+    <h1>Summer in Greensboro</h1><p class="lede">For year-round residents and the many families who join us each summer.</p>
+    <ul class="boards">${items.map(i=>`<li><a href="#/summer"><span class="t">${i[0]}</span><div class="meta">${i[1]}</div></a></li>`).join("")}</ul>`;
+  },
+
+  contact(){
+    return `<div class="crumbs"><a href="#/">Home</a> / Town Office</div>
+    <h1>Town Office</h1><p class="lede">Hours, staff, and who to contact for what.</p>
+    <div class="two"><section class="card"><h2 style="margin-top:0">Who to contact</h2>
+      <dl class="facts"><dt>Town Clerk</dt><dd>Land records, licenses, elections, vital records</dd><dt>Town Administrator</dt><dd>Town operations, Selectboard support, emergency notices</dd><dt>Road Crew</dt><dd>Road conditions and plowing</dd><dt>Zoning</dt><dd>Permits and land use questions</dd></dl></section>
+      <aside class="card"><h2 style="margin-top:0">Visit or call</h2><p>[Street address]<br>[Phone]<br>[Email]</p><h2>Hours</h2><p style="margin:0">[Days and hours]</p></aside></div>`;
+  },
+
+  notices(){
+    return `<div class="crumbs"><a href="#/">Home</a> / Town notices</div><h1>Town notices</h1>
+    <p class="lede">Current notices from the Town Office. Each notice comes down automatically on its end date.</p>
+    <ul class="notices">${activeNotices().map(n=>`<li><h3>${esc(n.title)}</h3><div>${esc(n.text)}</div><div class="until">Shown until ${fmt(n.until)}</div></li>`).join("")}</ul>`;
+  },
+
+  accessibility(){
+    return `<h1>Accessibility statement</h1><p class="lede">The town is committed to a website everyone can use, meeting WCAG 2.1 AA. If something doesn't work for you, contact the Town Office and we'll help.</p>`;
+  },
+
+  staff(){
+    return `<div class="crumbs"><a href="#/">Home</a> / Staff view</div>
+    <h1>How staff post to the site</h1>
+    <div class="staff-intro"><p style="margin:0">This is what Brett and Josh would see. One short form per task. Each entry appears everywhere it belongs: the homepage, the board's page, and Meetings &amp; Records. Try it: publish a meeting or a notice, then return to the resident view.</p></div>
+    <div class="forms">
+      <form class="form" id="meetForm"><h2>Add a meeting</h2>
+        <div class="field"><label for="mb">Board</label><select id="mb">${BOARDS.map(b=>`<option value="${b.id}">${esc(b.name)}</option>`).join("")}</select></div>
+        <div class="row"><div class="field"><label for="md">Date</label><input id="md" type="date" value="2026-10-21" required></div>
+        <div class="field"><label for="mt">Time</label><input id="mt" type="time" value="18:30"></div></div>
+        <div class="field"><label for="mz">Zoom link</label><input id="mz" type="url" placeholder="https://"></div>
+        <div class="field"><label for="ma">Agenda</label><input id="ma" type="text" placeholder="Choose file (prototype)"><span class="hint">Must be posted at least 48 hours before a regular meeting.</span></div>
+        <div class="field"><label for="mm">Minutes</label><input id="mm" type="text" placeholder="Add after the meeting"><span class="hint">Due within 5 days after the meeting.</span></div>
+        <button class="primary" type="submit">Publish meeting</button>
+        <p class="status" id="meetStatus" hidden></p>
+      </form>
+      <form class="form" id="noticeForm"><h2>Post a notice</h2>
+        <div class="field"><label for="nt1">Title</label><input id="nt1" type="text" value="Boil water notice" required></div>
+        <div class="field"><label for="nx">Message</label><textarea id="nx" rows="4">Residents on the village water system should boil water before drinking until further notice.</textarea></div>
+        <div class="field"><label for="nu">Show until</label><input id="nu" type="date" value="2026-09-30" required><span class="hint">The notice comes down automatically.</span></div>
+        <div class="check"><input id="nb" type="checkbox" checked><label for="nb">Also show as a banner across the top of every page</label></div>
+        <button class="primary" type="submit">Post notice</button>
+        <p class="status" id="noticeStatus" hidden></p>
+        <p class="note">For true emergencies, Josh also sends the message through VT-ALERT. The banner points residents to the details on the site.</p>
+      </form>
+    </div>
+    <p class="note" style="margin-top:1.5rem">On the current WordPress site these would be simple form screens. The same fields carry over to a future Astro-based platform, so staff would not need to relearn the task.</p>`;
+  },
+
+  notfound(){ return `<h1>Page not found</h1><p>Try <a href="#/meetings">Meetings &amp; Records</a> or the <a href="#/">home page</a>.</p>`; }
+};
+
+function renderRows(){
+  const b=document.getElementById("fBoard").value, y=document.getElementById("fYear").value,
+        w=document.getElementById("fWhen").value, q=document.getElementById("fQ").value.trim().toLowerCase();
+  let list=[...MEETINGS].sort((a,c)=>c.date.localeCompare(a.date))
+    .filter(m=>(!b||m.board===b)&&(!y||m.date.startsWith(y))&&(!w||(w==="up"?m.date>=TODAY:m.date<TODAY))&&(!q||boardName(m.board).toLowerCase().includes(q)||fmt(m.date).toLowerCase().includes(q)));
+  document.getElementById("rows").innerHTML = list.map(m=>`<tr><td><a href="#/meeting/${m.id}">${fmt(m.date)}</a><div class="meta">${m.time}</div></td><td>${esc(boardName(m.board))}</td><td>${statusPills(m)}</td></tr>`).join("") || '<tr><td colspan="3">No meetings match these filters. Clear a filter to see more.</td></tr>';
+  document.getElementById("count").textContent = list.length+" meeting"+(list.length===1?"":"s");
+}
+
+function setBanner(on,title,text){
+  const el=document.getElementById("banner"), btn=document.getElementById("toggleBanner");
+  if(title){document.getElementById("bannerTitle").textContent=title+":";document.getElementById("bannerText").textContent=text;}
+  el.hidden=!on; btn.setAttribute("aria-pressed",String(on)); btn.textContent=on?"Hide alert banner":"Show alert banner";
+}
+
+function route(){
+  const hash=location.hash.replace(/^#\/?/,"");
+  const [pathPart,query=""]=hash.split("?");
+  const parts=pathPart.split("/").filter(Boolean);
+  const params=new URLSearchParams(query);
+  const key=parts[0]||"home";
+  const view=VIEWS[key]&&!["notfound"].includes(key)?VIEWS[key]:VIEWS.notfound;
+  document.getElementById("view").innerHTML=view(params,parts[1]);
+  const navKey={meeting:"meetings",board:"boards",notices:"",alerts:"",staff:""}[key]??key;
+  document.querySelectorAll("nav.main a").forEach(a=>a.dataset.nav===navKey?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
+  const h1=document.querySelector("#view h1"); document.title=(h1&&key!=="home"?h1.textContent+": ":"")+"Town of Greensboro, Vermont";
+  if(key==="meetings"){
+    if(params.get("board")) document.getElementById("fBoard").value=params.get("board");
+    ["fBoard","fYear","fWhen"].forEach(id=>document.getElementById(id).addEventListener("change",renderRows));
+    document.getElementById("fQ").addEventListener("input",renderRows);
+    renderRows();
+  }
+  if(key==="staff"){
+    document.getElementById("meetForm").addEventListener("submit",e=>{
+      e.preventDefault();
+      const board=document.getElementById("mb").value, date=document.getElementById("md").value;
+      const t=document.getElementById("mt").value||"18:30"; const [hh,mm]=t.split(":").map(Number);
+      const time=((hh%12)||12)+":"+String(mm).padStart(2,"0")+(hh<12?"am":"pm");
+      const id=board+"-"+date+"-"+Date.now();
+      MEETINGS.push({id,board,date,time,agenda:!!document.getElementById("ma").value,minutes:false,recording:false});
+      const s=document.getElementById("meetStatus"); s.hidden=false;
+      s.innerHTML=`Published. It now appears on the homepage, the <a href="#/board/${board}">${esc(boardName(board))} page</a>, and <a href="#/meetings">Meetings &amp; Records</a>.`;
+    });
+    document.getElementById("noticeForm").addEventListener("submit",e=>{
+      e.preventDefault();
+      const title=document.getElementById("nt1").value, text=document.getElementById("nx").value, until=document.getElementById("nu").value;
+      NOTICES.unshift({title,text,until});
+      if(document.getElementById("nb").checked) setBanner(true,title,text);
+      const s=document.getElementById("noticeStatus"); s.hidden=false;
+      s.innerHTML=`Posted. It appears on the <a href="#/">homepage</a> until ${fmt(until)}.`;
+    });
+  }
+  if(location.hash) document.getElementById("main").focus({preventScroll:false});
+  window.scrollTo(0,0);
+}
+
+document.getElementById("toggleBanner").addEventListener("click",()=>setBanner(document.getElementById("banner").hidden));
+document.getElementById("searchForm").addEventListener("submit",e=>{e.preventDefault();location.hash="#/meetings?q="+encodeURIComponent(document.getElementById("q").value);});
+window.addEventListener("hashchange",route);
+route();
+</script>
+</body>
+</html>
